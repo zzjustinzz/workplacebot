@@ -1,0 +1,19 @@
+{
+    "env": {
+        "development": {
+            "port": 5000
+        },
+        "staging": {
+            "port": 5001
+        },
+        "production": {
+            "port": 5002
+        }
+    },
+    "FB_VERIFY_TOKEN": "tobicasebottoken",
+    "FB_PAGE_TOKEN": "EAABubraSrAcBAJMB399w1oEp4FAJZCV1wa27aPeKkrPmHV4RMpHLfacTgyvgVgISDObvmlmitLE6EMC37JZAIwpX18rkZBG9dZC4BycNG0TiGX8GY05hWqEVfXX1s7EZCjZC2ZCNza90bhvcL710TwsafHFpaATqaPeMw1jFcZBe6WCoty5GDtkq",
+    "API_AI_CLIENT_ACCESS_TOKEN": "30b23116cba443f39e8907dce2ce3ae2",
+    "MICROSOFT_APP_ID": "32891222-94ec-4e05-85aa-f7fe57f3a920",
+    "MICROSOFT_APP_PASSWORD": "dA5BAPWn0atyee1YUDX6zv7",
+    "db": "mongodb://localhost/workplace"
+}
