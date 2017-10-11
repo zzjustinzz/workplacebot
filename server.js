@@ -1,15 +1,9 @@
 'use strict'
 
-var express = require('express'),
-    app = express(),
-    port = process.env.PORT || 5000,
-    bodyParser = require('body-parser');
-
 var config = require('./config/config');
-var bot = require('./controller/bot-builder');
-var routes = require('./routes/routes');
 var mongoose = require('mongoose');
 mongoose.connect(config.db);
+require('./model/user');
 
 // Handle the connection event
 var db = mongoose.connection;
@@ -18,6 +12,14 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     console.log("DB connection alive");
 });
+
+var express = require('express'),
+    app = express(),
+    port = process.env.PORT || 5000,
+    bodyParser = require('body-parser');
+
+var bot = require('./controller/bot-builder');
+var routes = require('./routes/routes');
 
 switch (process.env.NODE_ENV) {
     case 'staging':

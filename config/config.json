@@ -15,5 +15,6 @@
     "API_AI_CLIENT_ACCESS_TOKEN": "30b23116cba443f39e8907dce2ce3ae2",
     "MICROSOFT_APP_ID": "32891222-94ec-4e05-85aa-f7fe57f3a920",
     "MICROSOFT_APP_PASSWORD": "dA5BAPWn0atyee1YUDX6zv7",
-    "db": "mongodb://localhost/workplace"
+    "db": "mongodb://localhost/workplace",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
 }

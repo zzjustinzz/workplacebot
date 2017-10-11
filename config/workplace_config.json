@@ -6,5 +6,8 @@
     "SCHEME_CORE": "urn:scim:schemas:core:1.0",
     "SCHEME_NTP": "urn:scim:schemas:extension:enterprise:1.0",
     "RESPONSE_OK": 200,
-    "RESPONSE_CREATED": 201
+    "RESPONSE_CREATED": 201,
+    "HOST": "https://www.facebook.com",
+    "WORKPLACE_SUFFIX": "scim",
+    "WORKPLACE_VERSION": "v1"
 }

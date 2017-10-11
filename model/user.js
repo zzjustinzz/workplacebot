@@ -2,6 +2,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
+    id: {
+        type: String,
+        required: true,
+        unique: false,
+        index: true
+    },
     userName: {
         type: String,
         required: true,
@@ -9,10 +15,8 @@ var UserSchema = new Schema({
         index: true
     },
     name: {
-        formatted: {
-            type: String,
-            required: true
-        }
+        type: String,
+        required: true
     },
     active: {
         type: Boolean,
@@ -20,7 +24,11 @@ var UserSchema = new Schema({
         'default': true
     },
     emails: [],
-    addresses: []
+    addresses: [],
+    department: {
+        type: String,
+        required: false
+    }
 });
 
 /**
