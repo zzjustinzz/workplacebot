@@ -5,23 +5,25 @@ var workplace_config = require('../config/workplace_config');
 var config = require('../config/config');
 var mongoose = require('mongoose');
 var convertExcel = require('excel-as-json').processFile;
-var _ = require('lodash');
 
 var Client = require('node-rest-client').Client;
 var restClient = new Client();
 var User = mongoose.model('User');
 
-exports.list_user = function(req, res) {
-    var args = {
-        headers: {
-            'User-Agent': config.user_agent,
-            Authorization: workplace_config.HEADER_AUTH_VAL_PREFIX + workplace_config.WORKPLACE_ACCESS_TOKEN,
-            mimetypes: {
-                json: ['application/json', 'application/json; charset=utf-8', 'application/scim+json']
-            }
-        } // request headers 
+var get_header = function() {
+    return {
+        'User-Agent': config.user_agent,
+        Authorization: workplace_config.HEADER_AUTH_VAL_PREFIX + workplace_config.WORKPLACE_ACCESS_TOKEN,
+        mimetypes: {
+            json: ['application/json', 'application/json; charset=utf-8', 'application/scim+json']
+        }
     };
-    restClient.get('https://www.facebook.com/scim/v1/Users', args,
+};
+
+exports.list_user = function(req, res) {
+    var args = {};
+    args.headers = get_header();
+    restClient.get(workplace_config.HOST + '/' + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
         function(data, response) {
             if (response.statusCode === 200) {
                 var restData = JSON.parse(data.toString('utf8'));
@@ -68,16 +70,9 @@ exports.create_user = function(req, res) {
             'urn:scim:schemas:extension:enterprise:1.0': {
                 'department': req.body.department
             }
-        },
-        headers: {
-            'User-Agent': config.user_agent,
-            Authorization: workplace_config.HEADER_AUTH_VAL_PREFIX + workplace_config.WORKPLACE_ACCESS_TOKEN,
-            mimetypes: {
-                json: ['application/json', 'application/json; charset=utf-8', 'application/scim+json']
-            },
-            'Content-Type': 'application/json'
         } // request headers 
     };
+    args.headers = get_header();
     var parseUser = function(fbUserData) {
         var parsedData = {
             id: fbUserData.id,
@@ -94,7 +89,7 @@ exports.create_user = function(req, res) {
         }
         return parsedData;
     };
-    restClient.post('https://www.facebook.com/scim/v1/Users', args,
+    restClient.post(workplace_config.HOST + '/' + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
         function(data, response) {
             var restData = JSON.parse(data.toString('utf8'));
             if (response.statusCode === 201) {
@@ -195,16 +190,9 @@ var createUser = function(userexcel) {
                 'urn:scim:schemas:extension:enterprise:1.0': {
                     'department': userexcel.department
                 }
-            },
-            headers: {
-                'User-Agent': config.user_agent,
-                Authorization: workplace_config.HEADER_AUTH_VAL_PREFIX + workplace_config.WORKPLACE_ACCESS_TOKEN,
-                mimetypes: {
-                    json: ['application/json', 'application/json; charset=utf-8', 'application/scim+json']
-                },
-                'Content-Type': 'application/json'
-            } // request headers 
+            }
         };
+        args.headers = get_header();
         restClient.post(workplace_config.HOST + '/' + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
             function(data, response) {
                 var restData = JSON.parse(data.toString('utf8'));
@@ -259,14 +247,6 @@ var updateMangerToUser = function(manager, userexcel) {
         getUserDB(userexcel.username)
             .then(function(user) {
                 var args = {
-                    headers: {
-                        'User-Agent': config.user_agent,
-                        Authorization: workplace_config.HEADER_AUTH_VAL_PREFIX + workplace_config.WORKPLACE_ACCESS_TOKEN,
-                        mimetypes: {
-                            json: ['application/json', 'application/json; charset=utf-8', 'application/scim+json']
-                        },
-                        'Content-Type': 'application/json'
-                    },
                     data: {
                         schemas: [workplace_config.SCHEME_CORE, workplace_config.SCHEME_NTP, workplace_config.SCHEME_SMD, workplace_config.SCHEME_ASD],
                         id: user.id,
@@ -286,6 +266,7 @@ var updateMangerToUser = function(manager, userexcel) {
 
                     }
                 };
+                args.headers = get_header();
                 restClient.put(workplace_config.HOST + '/' + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX + '/' + user.id, args,
                     function(data, response) {
                         var restData = JSON.parse(data.toString('utf8'));
