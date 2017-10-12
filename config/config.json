@@ -16,5 +16,6 @@
     "MICROSOFT_APP_ID": "32891222-94ec-4e05-85aa-f7fe57f3a920",
     "MICROSOFT_APP_PASSWORD": "dA5BAPWn0atyee1YUDX6zv7",
     "db": "mongodb://localhost/workplace",
-    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+    "excel_path": "./controller/assets/test.xlsx"
 }

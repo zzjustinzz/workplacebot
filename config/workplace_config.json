@@ -5,6 +5,8 @@
     "USERS_RESOURCE_SUFFIX": "Users",
     "SCHEME_CORE": "urn:scim:schemas:core:1.0",
     "SCHEME_NTP": "urn:scim:schemas:extension:enterprise:1.0",
+    "SCHEME_SMD": "urn:scim:schemas:extension:facebook:starttermdates:1.0",
+    "SCHEME_ASD": "urn:scim:schemas:extension:facebook:accountstatusdetails:1.0",
     "RESPONSE_OK": 200,
     "RESPONSE_CREATED": 201,
     "HOST": "https://www.facebook.com",

@@ -28,6 +28,10 @@ var UserSchema = new Schema({
     department: {
         type: String,
         required: false
+    },
+    managerId: {
+        type: String,
+        required: false
     }
 });
 
