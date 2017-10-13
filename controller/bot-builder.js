@@ -24,6 +24,7 @@ var find_email_entity = function(entities) {
 };
 
 intents.matches('what-manager', function(session, dialog) {
+    session.sendTyping();
     var what_manager = require('./api/what-manager');
 
     var user = find_email_entity(dialog.entities).entity;

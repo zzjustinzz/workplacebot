@@ -9,7 +9,11 @@
     "SCHEME_ASD": "urn:scim:schemas:extension:facebook:accountstatusdetails:1.0",
     "RESPONSE_OK": 200,
     "RESPONSE_CREATED": 201,
-    "HOST": "https://www.facebook.com",
+    "HOST": "https://www.facebook.com/",
     "WORKPLACE_SUFFIX": "scim",
-    "WORKPLACE_VERSION": "v1"
+    "WORKPLACE_VERSION": "v1",
+    "GRAPH_URL_PREFIX": "https://graph.facebook.com/",
+    "GROUPS_SUFFIX": "groups",
+    "COMMUNITY_SUFFIX": "community",
+    "MEMBERS_SUFFIX": "members"
 }

@@ -1,6 +1,7 @@
 'use strict';
 
-var workplace = require('../controller/workplace');
+var workplace_accounts = require('../controller/workplace-accounts');
+var workplace_groups = require('../controller/workplace-groups');
 
 module.exports = function(app) {
     var Client = require('node-rest-client').Client;
@@ -9,9 +10,12 @@ module.exports = function(app) {
 
     //Account 
     app.route('/api/users')
-        .get(workplace.list_user)
-        .post(workplace.create_user);
+        .get(workplace_accounts.list_user)
+        .post(workplace_accounts.create_user);
 
-    app.route('/api/excel')
-        .get(workplace.read_excel);
+    app.route('/api/excel/accounts')
+        .get(workplace_accounts.read_excel_accounts);
+
+    app.route('/api/excel/groups')
+        .get(workplace_groups.read_excel_groups);
 };

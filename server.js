@@ -4,6 +4,7 @@ var config = require('./config/config');
 var mongoose = require('mongoose');
 mongoose.connect(config.db);
 require('./model/user');
+require('./model/group');
 
 // Handle the connection event
 var db = mongoose.connection;

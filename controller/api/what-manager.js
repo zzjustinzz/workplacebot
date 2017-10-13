@@ -24,7 +24,7 @@ var find_user_by_email = function(user) {
         args.parameters = {
             filter: 'userName eq "' + user + '"'
         };
-        restClient.get(workplace_config.HOST + '/' + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
+        restClient.get(workplace_config.HOST + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
             function(data, response) {
                 var restData = JSON.parse(data.toString('utf8'));
                 if (response.statusCode === 200 && !restData.Errors) {
@@ -67,7 +67,7 @@ var find_user_by_id = function(user) {
                 });
             } else {
                 var managerId = user['urn:scim:schemas:extension:enterprise:1.0'].manager.managerId;
-                restClient.get(workplace_config.HOST + '/' + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX + '/' + managerId, args,
+                restClient.get(workplace_config.HOST + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX + '/' + managerId, args,
                     function(data, response) {
                         var restData = JSON.parse(data.toString('utf8'));
                         if (response.statusCode === 200) {
