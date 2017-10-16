@@ -21,32 +21,74 @@ var get_header = function() {
     };
 };
 
+var findUser = function(user) {
+    return new Promise((resolve, reject) => {
+        var args = {};
+        args.headers = get_header();
+        args.parameters = {
+            filter: 'userName eq "' + user + '"'
+        };
+        restClient.get(workplace_config.HOST + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
+            function(data, response) {
+                var restData = JSON.parse(data.toString('utf8'));
+                if (response.statusCode === 200 && !restData.Errors) {
+                    if (restData.Resources.length > 0) {
+                        resolve(restData.Resources[0]);
+                    } else {
+                        reject({
+                            message: 'Not found any user match to ' + user
+                        });
+                    }
+                } else {
+                    reject({
+                        message: 'Failed to get user from workplace: ' + restData.Errors
+                    });
+                }
+            },
+            function(err) {
+                reject({
+                    message: 'Error when request to Facebook API: ' + err
+                })
+            });
+    });
+};
+
 exports.list_user = function(req, res) {
     var args = {};
     args.headers = get_header();
-    restClient.get(workplace_config.HOST + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
-        function(data, response) {
-            if (response.statusCode === 200) {
-                var restData = JSON.parse(data.toString('utf8'));
-                if (!restData.Errors) {
-                    res.json(restData);
+    if (req.query.user) {
+        findUser(req.query.user)
+            .then(function(user) {
+                res.json(user);
+            })
+            .catch(function(err) {
+                res.json(500, err);
+            });
+    } else {
+        restClient.get(workplace_config.HOST + workplace_config.WORKPLACE_SUFFIX + '/' + workplace_config.WORKPLACE_VERSION + '/' + workplace_config.USERS_RESOURCE_SUFFIX, args,
+            function(data, response) {
+                if (response.statusCode === 200) {
+                    var restData = JSON.parse(data.toString('utf8'));
+                    if (!restData.Errors) {
+                        res.json(restData);
+                    } else {
+                        res.json({
+                            message: 'Error when request to Facebook API'
+                        })
+                    }
                 } else {
                     res.json({
                         message: 'Error when request to Facebook API'
                     })
                 }
-            } else {
+            },
+            function(err) {
+                console.log('Failed to request to Facebook API: ' + err);
                 res.json({
                     message: 'Error when request to Facebook API'
                 })
-            }
-        },
-        function(err) {
-            console.log('Failed to request to Facebook API: ' + err);
-            res.json({
-                message: 'Error when request to Facebook API'
-            })
-        });
+            });
+    }
 };
 
 exports.create_user = function(req, res) {
@@ -355,7 +397,7 @@ exports.read_excel = function(req, res) {
     });
 };
 
-exports.find_manger = function(req, res) {
+exports.find_manager = function(req, res) {
     what_manager.find_user(req.query.user)
         .then(function(response) {
             res.json(response);

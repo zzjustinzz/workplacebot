@@ -14,7 +14,7 @@ module.exports = function(app) {
         .post(workplace_accounts.create_user);
 
     app.route('/api/getManager')
-        .get(workplace_accounts.find_manger);
+        .get(workplace_accounts.find_manager);
 
     app.route('/api/excel/accounts')
         .get(workplace_accounts.read_excel_accounts);
@@ -25,4 +25,10 @@ module.exports = function(app) {
 
     app.route('/api/groups')
         .get(workplace_groups.list_groups);
+    app.route('/api/groups/:groupId')
+        .get(workplace_groups.get_group);
+    app.route('/api/groups/:groupId/admins')
+        .get(workplace_groups.get_group_admins);
+    app.route('/api/groups/:groupId/members')
+        .get(workplace_groups.get_group_members);
 };

@@ -275,3 +275,60 @@ exports.list_groups = function(req, res) {
             });
     }
 };
+
+exports.get_group = function(req, res) {
+    var args = {};
+    args.headers = get_header();
+    restClient.get(workplace_config.GRAPH_URL_PREFIX + req.params.groupId, args,
+        function(data, response) {
+            var restData = JSON.parse(data.toString('utf8'));
+            if (response.statusCode === 200) {
+                res.json(restData);
+            } else {
+                res.json(500, restData);
+            }
+        },
+        function(err) {
+            res.json(500, {
+                message: err
+            });
+        });
+};
+
+exports.get_group_admins = function(req, res) {
+    var args = {};
+    args.headers = get_header();
+    restClient.get(workplace_config.GRAPH_URL_PREFIX + req.params.groupId + '/admins', args,
+        function(data, response) {
+            var restData = JSON.parse(data.toString('utf8'));
+            if (response.statusCode === 200) {
+                res.json(restData);
+            } else {
+                res.json(500, restData);
+            }
+        },
+        function(err) {
+            res.json(500, {
+                message: err
+            });
+        });
+};
+
+exports.get_group_members = function(req, res) {
+    var args = {};
+    args.headers = get_header();
+    restClient.get(workplace_config.GRAPH_URL_PREFIX + req.params.groupId + '/members', args,
+        function(data, response) {
+            var restData = JSON.parse(data.toString('utf8'));
+            if (response.statusCode === 200) {
+                res.json(restData);
+            } else {
+                res.json(500, restData);
+            }
+        },
+        function(err) {
+            res.json(500, {
+                message: err
+            });
+        });
+};
