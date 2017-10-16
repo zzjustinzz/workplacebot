@@ -38,7 +38,7 @@ var find_user_by_email = function(user) {
                     }
                 } else {
                     reject({
-                        message: 'Failed to update to workplace: ' + restData.Errors
+                        message: 'Failed to query to workplace: ' + restData.Errors
                     });
                 }
             },

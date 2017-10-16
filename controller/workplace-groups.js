@@ -6,7 +6,7 @@ var convertExcel = require('excel-as-json').processFile;
 
 var Client = require('node-rest-client').Client;
 var restClient = new Client();
-var User = mongoose.model('Group');
+var Group = mongoose.model('Group');
 
 var get_header = function() {
     return {
@@ -75,37 +75,69 @@ var addMember = function(user, groupId) {
     });
 };
 
+var addMemberToGroup = function(member, group) {
+    return new Promise((resolve, reject) => {
+        if (member === '') {
+            reject({
+                message: 'User is empty'
+            });
+        } else {
+            return findUser(member)
+                .then(function(user) {
+                    return addMember(user, group)
+                        .then(function(res) {
+                            console.log('Success to add ' + user.userName + ' to group ' + restData.id);
+                            resolve(res);
+                        })
+                        .catch(function(err) {
+                            reject(err);
+                        });
+                })
+                .catch(function(err) {
+                    reject(err);
+                });
+        }
+    });
+};
+
 var sendCreateGroup = function(args) {
     return new Promise((resolve, reject) => {
         restClient.post(workplace_config.GRAPH_URL_PREFIX + workplace_config.COMMUNITY_SUFFIX + '/' + workplace_config.GROUPS_SUFFIX, args,
             function(data, response) {
                 var restData = JSON.parse(data.toString('utf8'));
                 if (response.statusCode === 200) {
-                    Promise.all(args.members.map(function(member) {
-                        return new Promise((resolve, reject) => {
-                            if (member === '') {
-                                resolve();
-                            } else {
-                                return findUser(member)
-                                    .then(function(user) {
-                                        return addMember(user, restData.id)
-                                            .then(function(res) {
-                                                console.log('Success to add ' + user.userName + ' to group ' + restData.id);
-                                                resolve(res);
-                                            })
-                                            .catch(function(err) {
-                                                reject(err);
-                                            });
-                                    })
-                                    .catch(function(err) {
-                                        reject(err);
+                    if (args.members) {
+                        let success = 0;
+                        let errCount = 0;
+                        let members = [];
+                        Promise.all(args.members.map(function(member) {
+                            return addMemberToGroup(member, restData.id)
+                                .then(function(res) {
+                                    success++;
+                                    members.push(member);
+                                })
+                                .catch(function(err) {
+                                    console.log(err);
+                                    errCount++;
+                                })
+                        })).then(function(res) {
+                            console.log('+++ Add all members to group ' + restData.id + ' was done:');
+                            console.log('+ Success: ' + success);
+                            console.log('+ Error: ' + errCount);
+                            args.data.members = members;
+                            args.data.id = restData.id;
+                            var group = new Group(args.data);
+                            group.save(function(err) {
+                                if (err) {
+                                    reject({
+                                        message: 'Error when save to DB ' + err
                                     });
-                            }
+                                } else {
+                                    resolve(restData);
+                                }
+                            });
                         });
-                    })).then(function(res) {
-                        console.log('Add all members to group ' + restData.id + ' success.');
-                        resolve(restData);
-                    });
+                    }
                 } else {
                     reject({
                         message: 'Error when save to workplace at ' + args.data.name
@@ -166,7 +198,7 @@ var createGroup = function(groupexcel) {
 }
 
 exports.read_excel_groups = function(req, res) {
-    console.log('Start import from excel file');
+    console.log('***** Start import from excel file');
     convertExcel(config.excel_path, undefined, { sheet: '2' }, function(err, data) {
         if (err) {
             console.log(err);
@@ -178,19 +210,68 @@ exports.read_excel_groups = function(req, res) {
                 return createGroup(groupexcel)
                     .then(function(res) {
                         i++;
-                        console.log('Success to create group with id ' + res.id + '(' + i + '/' + complete + ')');
+                        console.log('*** Success to create group with id ' + res.id + '(' + i + '/' + complete + ')');
                     })
                     .catch(function(err) {
                         e++;
                         console.log(err);
                     });
             })).then(function(res) {
-                console.log('Done: ' + i + '/' + complete);
-                console.log('Fail: ' + e + '/' + complete);
+                console.log('***** Create group process was done: ')
+                console.log('* Done: ' + i + '/' + complete);
+                console.log('* Fail: ' + e + '/' + complete);
             });
             res.json({
                 message: 'Importing to workplace'
             });
         }
     });
+};
+
+exports.list_groups = function(req, res) {
+    var args = {};
+    args.headers = get_header();
+    if (req.query.user) {
+        findUser(req.query.user)
+            .then(function(user) {
+                restClient.get(workplace_config.GRAPH_URL_PREFIX + user.id + '/' + workplace_config.GROUPS_SUFFIX, args,
+                    function(data, response) {
+                        var restData = JSON.parse(data.toString('utf8'));
+                        if (response.statusCode === 200) {
+                            res.json(restData);
+                        } else {
+                            res.json(500, {
+                                message: 'Something was wrong'
+                            });
+                        }
+                    },
+                    function(err) {
+                        res.json(500, {
+                            message: err
+                        });
+                    });
+            })
+            .catch(function(err) {
+                res.json(500, {
+                    message: err
+                });
+            });
+    } else {
+        restClient.get(workplace_config.GRAPH_URL_PREFIX + workplace_config.COMMUNITY_SUFFIX + '/' + workplace_config.GROUPS_SUFFIX, args,
+            function(data, response) {
+                var restData = JSON.parse(data.toString('utf8'));
+                if (response.statusCode === 200) {
+                    res.json(restData);
+                } else {
+                    res.json(500, {
+                        message: 'Something was wrong'
+                    });
+                }
+            },
+            function(err) {
+                res.json(500, {
+                    message: err
+                });
+            });
+    }
 };

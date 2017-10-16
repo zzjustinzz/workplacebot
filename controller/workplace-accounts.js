@@ -5,6 +5,7 @@ var workplace_config = require('../config/workplace_config');
 var config = require('../config/config');
 var mongoose = require('mongoose');
 var convertExcel = require('excel-as-json').processFile;
+var what_manager = require('./api/what-manager');
 
 var Client = require('node-rest-client').Client;
 var restClient = new Client();
@@ -352,4 +353,16 @@ exports.read_excel = function(req, res) {
             });
         }
     });
+};
+
+exports.find_manger = function(req, res) {
+    what_manager.find_user(req.query.user)
+        .then(function(response) {
+            res.json(response);
+        })
+        .catch(function(err) {
+            res.json(500, {
+                error: err
+            });
+        });
 };
